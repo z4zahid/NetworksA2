@@ -26,7 +26,7 @@ int main (int argc, char *argv[]) {
 	socketInfo.sin_family = AF_INET;
 	socketInfo.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(socketId (const struct sockaddr *) (&socketInfo), sizeof(struct sockaddr_in)) < 0) {
+	if (bind(socketId, (const struct sockaddr *) (&socketInfo), sizeof(struct sockaddr_in)) < 0) {
 		cerr << "socket could not bind" << endl;
 		return 0;
 	}
@@ -39,8 +39,8 @@ int main (int argc, char *argv[]) {
 	}
 
 	/* user getaddrinfo() to get server IP */
-	struct addrinfo *resocketId hints;
-	memset(&hintsocketId 0, sizeof(struct addrinfo));
+	struct addrinfo *res, hints;
+	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_DGRAM;
 
@@ -58,12 +58,12 @@ int main (int argc, char *argv[]) {
 		}
 	}
 
-	ssocketInfo.sin_family = AF_INET;
-	ssocketInfo.sin_port = htons (portnum);
+	socketInfo.sin_family = AF_INET;
+	socketInfo.sin_port = htons (portnum);
 
 	char buf [256];
 	string command;
-	
+
 	while (getline(cin, command) || cin.eof()) {
 
 		//make sure buffer is clear
@@ -79,7 +79,7 @@ int main (int argc, char *argv[]) {
 			strcpy(buf, command.c_str());
 		}
 
-		int len = sendto(socketId buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&sa), sizeof(struct sockaddr_in));
+		int len = sendto(socketId, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&sa), sizeof(struct sockaddr_in));
 		if (len < strlen(buf) + 1) {
 			cerr << "Tried to send " << (strlen(buf) + 1) << ", sent only " << len << endl;
 		}
@@ -90,7 +90,7 @@ int main (int argc, char *argv[]) {
 
 		//await reply from server, to be filled in to buffer
 		memset(buf, 0, 256);		
-		recvfrom(socketId buf, 256, 0, NULL, NULL);
+		recvfrom(socketId, buf, 256, 0, NULL, NULL);
 		
 		string output(buf);
 		if (output.find("error") != string::npos)
