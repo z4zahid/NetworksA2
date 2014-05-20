@@ -64,7 +64,7 @@ int main (int argc, char *argv[]) {
 
 			//look up corresponding student name
 			string command(buf);
-			string studentName = getStudentName(command);
+			string studentName = getStudentNameWithGet(command);
 
 			const char* name = studentName.c_str();
 			strcpy(buf, name);
