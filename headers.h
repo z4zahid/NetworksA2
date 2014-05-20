@@ -14,3 +14,4 @@
 
 #define STOP "STOP"
 #define STOP_SESSION "STOP_SESSION"
+#define GET "GET"

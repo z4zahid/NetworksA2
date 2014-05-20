@@ -15,6 +15,8 @@ struct group {
 
 void populateGroups();
 std::string getStudentName(std::string command);
+std::string getStudentNameWithGet(std::string command);
+std::string getStudentName(std::string groupNum, std::string studentNum);
 int mybind(int sockfd, struct sockaddr_in* addr);
 
 #endif

@@ -50,7 +50,7 @@ string getStudentName(string groupNum, string studentNum) {
 		}
 	}
 
-	//doesnt exist
+	//doesn't exist
 	return "error: " + groupNum + " " + studentNum;
 }
 
@@ -68,6 +68,22 @@ string getStudentName(string command) {
 	string groupNum = params[0];
 	string studentNum = params[1];
 
+	return getStudentName(groupNum, studentNum);
+}
+
+string getStudentNameWithGet(string command) {
+    vector<string> params = parseParamsFromClient(command);
+    
+    if (params.size() < 3)
+		return "error: invalid input";
+    
+	//TODO
+	// if either one of them is not a number
+    // return "error: invalid input";
+    
+	string groupNum = params[1];
+	string studentNum = params[2];
+    
 	return getStudentName(groupNum, studentNum);
 }
 
@@ -89,15 +105,11 @@ void flush(int curGroupId, map<int, string> *studentMap) {
 
 //Note: assumes input is correct, that it does not try later to add to an existing group etc (asked TA)
 void populateGroups() {
-
 	string line;
 	int curGroupId = -1;
 	map<int, string> m_students;
-
 	while (getline(cin, line)) {
-
 		vector<string> params = parseParamsFromStdIn(line);
-
 		if (params[0] == "Group")
 		{
 			flush(curGroupId, &m_students);
@@ -110,7 +122,6 @@ void populateGroups() {
   			m_students.insert (std::pair<int, string>(studentId, studentName));
 		}
 	}
-
 	flush(curGroupId, &m_students);
 }
 
