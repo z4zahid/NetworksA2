@@ -2,55 +2,55 @@
 
 using namespace std;
 
-//Much of the source below was shown in tutorial on May 18,2014
+//Source: the initial socket setup was shown in tutorial on May 18,2014
+
 int main (int argc, char *argv[]) {
 
-	int s;
-	unsigned short portnum;
+	// bad arguments
+	if (argc > 2) {
+		cerr << "usage : " << argv[0] << " <optional server port>" << endl;
+		return 0;
+	}
 
-	// Grab port if provided, otherwise assign 0
-	if (argc < 2) 
-		portnum = 0;
-	else 
-		portnum = (unsigned short)atoi(argv[1]);
+	// Defaut port is 0
+	unsigned short port = port = (argc < 2)?  0: (unsigned short)atoi(argv[1]);
 
 	// Create a socket for UDP
-	if ((s = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		perror("socket");
-		exit(0);
+	int socketId;
+	if ((socketId = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+		cerr << "Socket was not created" << endl;
+		return 0;
 	}
 
-	// Structure to provide socket info for bind
-	struct sockaddr_in a;
-	a.sin_family = AF_INET;
-	a.sin_port = htons(portnum);
-	a.sin_addr.s_addr = INADDR_ANY;
+	struct sockaddr_in sockInfo;
+	sockInfo.sin_port = htons(port);
+	sockInfo.sin_family = AF_INET;
+	sockInfo.sin_addr.s_addr = INADDR_ANY;
 
-	if (mybind (s, (struct sockaddr_in *)(&a)) < 0) {
-		perror ("bind");
-		exit(0);
+	if (mybind (socketId, (struct sockaddr_in *) (&sockInfo)) < 0) {
+		cerr << "Could not bind to the socket" << endl;
+		return 0;
 	}
 
-	memset (&a, 0, sizeof(struct sockaddr_in));
+	//clear sockinfo
+	memset (&sockInfo, 0, sizeof(struct sockaddr_in));
 
-	// In case port wasnt specified
 	int addrlen = sizeof(struct sockaddr_in);
-	if (getsockname(s, (struct sockaddr *) (&a), (socklen_t*) (&addrlen)) < 0) {
-		perror ("getsockname");
-		exit (0);
+	if (getsockname(socketId, (struct sockaddr *) (&sockInfo), (socklen_t*) (&addrlen)) < 0) {
+		cerr << "Did not create socket name" << endl;
+		return 0;
 	}
 
 	//prints out port number (with no embellishment whatsoever — the port number only)
-	printf ("%hu\n", ntohs(a.sin_port));
-	memset(&a, 0, sizeof(struct sockaddr_in));
+	cout << ntohs(sockInfo.sin_port) << endl; 
+	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
 	//Read from stdin information on groups till it sees an EOF. 
 	populateGroups();
 
 	char buf[256];
-
 	//Accept client commands
-	while (recvfrom(s, buf, 256, 0, (struct sockaddr*) (&a), (socklen_t*) (&addrlen))) {
+	while (recvfrom(socketId, buf, 256, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
 
 		// tells the server to terminate; i.e., the server process dies. Termination must be graceful.
 		if (strcmp("STOP", buf) == 0)
@@ -62,6 +62,7 @@ int main (int argc, char *argv[]) {
 
 		} else {
 
+			//look up corresponding student name
 			string command(buf);
 			string studentName = getStudentName(command);
 
@@ -69,14 +70,14 @@ int main (int argc, char *argv[]) {
 			strcpy(buf, name);
 
 			int len;
-			if ((len = sendto(s, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&a), sizeof(struct sockaddr_in))) < strlen(buf) + 1) {
-				fprintf(stderr, "Tried to send %d, sent only %d\n", strlen(buf) + 1, len );
+			if ((len = sendto(socketId, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&sockInfo), sizeof(struct sockaddr_in))) < strlen(buf) + 1) {
+				cerr << "Tried to send " << (strlen(buf) + 1) << ", sent only " << len << endl;
 			}
 		}
 
 		memset(buf, 0, 256);
 	}
 
-	close(s);
+	close(socketId);
 	return 0;
 }
