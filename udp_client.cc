@@ -58,8 +58,8 @@ int main (int argc, char *argv[]) {
 		}
 	}
 
-	socketInfo.sin_family = AF_INET;
-	socketInfo.sin_port = htons (portnum);
+	sa.sin_family = AF_INET;
+	sa.sin_port = htons (portnum);
 
 	char buf [256];
 	string command;
