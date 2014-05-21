@@ -86,7 +86,7 @@ int main (int argc, char *argv[]) {
 		}
 
 		//terminate client upon reaching end of input or getting the STOP command
-		if (cin.eof() || command == STOP)
+		if (cin.eof() || command == STOP || command == STOP_L)
 			break;	
 
 		//await reply from server, to be filled in to buffer
