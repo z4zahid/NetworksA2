@@ -13,5 +13,6 @@
 #include <iostream>
 
 #define STOP "STOP"
+#define STOP_L "stop"
 #define STOP_SESSION "STOP_SESSION"
 #define GET "GET"

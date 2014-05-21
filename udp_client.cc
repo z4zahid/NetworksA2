@@ -1,5 +1,6 @@
 #include "headers.h"
 #include <iostream>
+#include <cctype>
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -72,7 +73,7 @@ int main (int argc, char *argv[]) {
 		//fill buffer with msg to be sent to server
 		if (cin.eof()) {
 			strcpy (buf, STOP_SESSION);
-		} else if (command == STOP) {
+		} else if (command == STOP || command == STOP_L) {
 			strcpy(buf, STOP);
 		} else {
 			command = "GET " + command;
