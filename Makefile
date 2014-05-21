@@ -1,5 +1,5 @@
-XCC = gcc
-CFLAGS  = -o
+XCC = g++
+CFLAGS  = -c
 
 udp: client.o server.o
 
