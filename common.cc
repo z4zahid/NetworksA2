@@ -66,7 +66,7 @@ string getStudentNameWithGet(string command) {
     
 	string groupNum = params[1];
 	string studentNum = params[2];
-    
+	cout << groupNum << " " << studentNum << endl;    
 	return getStudentName(groupNum, studentNum);
 }
 
