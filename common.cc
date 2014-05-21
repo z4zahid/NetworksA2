@@ -92,17 +92,20 @@ void populateGroups() {
 	int curGroupId = -1;
 	map<int, string> m_students;
 	while (getline(cin, line)) {
-		vector<string> params = parseParamsFromStdIn(line);
-		if (params[0] == "Group")
-		{
-			flush(curGroupId, &m_students);
-			curGroupId = atoi(params[1].c_str());
-		}
-		else 
-		{
-			int studentId = atoi(params[0].c_str());
-			string studentName = params[1];
-  			m_students.insert (std::pair<int, string>(studentId, studentName));
+
+		if (!cin.eof()) {
+			vector<string> params = parseParamsFromStdIn(line);
+			if (params[0] == "Group")
+			{
+				flush(curGroupId, &m_students);
+				curGroupId = atoi(params[1].c_str());
+			}
+			else 
+			{
+				int studentId = atoi(params[0].c_str());
+				string studentName = params[1];
+	  			m_students.insert (std::pair<int, string>(studentId, studentName));
+			}
 		}
 	}
 	flush(curGroupId, &m_students);
