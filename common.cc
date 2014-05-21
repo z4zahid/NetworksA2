@@ -54,23 +54,6 @@ string getStudentName(string groupNum, string studentNum) {
 	return "error: " + groupNum + " " + studentNum;
 }
 
-string getStudentName(string command) {
-
-   vector<string> params = parseParamsFromClient(command);
-   
-    if (params.size() != 2)
-		return "error: invalid input";
-
-	//TODO
-	// if either one of them is not a number
-		// return "error: invalid input";
-
-	string groupNum = params[0];
-	string studentNum = params[1];
-
-	return getStudentName(groupNum, studentNum);
-}
-
 string getStudentNameWithGet(string command) {
     vector<string> params = parseParamsFromClient(command);
     

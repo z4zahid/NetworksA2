@@ -66,6 +66,7 @@ int main (int argc, char *argv[]) {
 
 	while (getline(cin, command) || cin.eof()) {
 
+		cout << command << endl;
 		//make sure buffer is clear
 		memset(buf, 0, 256);		
 

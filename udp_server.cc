@@ -58,7 +58,7 @@ int main (int argc, char *argv[]) {
 
 		// signals the server that the client will stop sending data.
 		if (strcmp(STOP_SESSION, buf) == 0) {
-			cout << "TODO: stop client session - handle multiple client case" << endl;
+			// we ignore this case for the udp server, no connection to 'close'
 
 		} else {
 
