@@ -32,12 +32,6 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	char hbuf[256], sbuf[256];
-
-	if (getnameinfo((struct sockaddr *) (&sockInfo), (socklen_t) (addrlen), hbuf, sizeof(hbuf), sbuf,
-	            sizeof(sbuf), NI_NUMERICHOST | NI_NUMERICSERV) == 0)
-	    printf("host=%s, serv=%s\n", hbuf, sbuf);
-
 	//clear sockinfo
 	memset (&sockInfo, 0, sizeof(struct sockaddr_in));
 
@@ -48,7 +42,37 @@ int main (int argc, char *argv[]) {
 	}
 
 	// prints out publicly reachable IP address/domain name and port number
+	struct ifaddrs *ifaddr, *ifa;
 
+    if (getifaddrs(&ifaddr) == -1) {
+       perror("getifaddrs");
+       exit(EXIT_FAILURE);
+   }
+
+   for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
+       if (ifa->ifa_addr == NULL)
+           continue;
+
+       int family = ifa->ifa_addr->sa_family;
+
+       /* For an AF_INET* interface address, display the address */
+
+       if (family == AF_INET || family == AF_INET6) {
+           int s = getnameinfo(ifa->ifa_addr,
+                   (family == AF_INET) ? sizeof(struct sockaddr_in) :
+                                         sizeof(struct sockaddr_in6),
+                   buf, 256,
+                   NULL, 0, NI_NUMERICHOST);
+           if (s != 0) {
+               printf("getnameinfo() failed: %s\n", gai_strerror(s));
+               exit(EXIT_FAILURE);
+           }
+
+           printf("\t\taddress: <%s>\n", buf);
+       } 
+   }
+
+	freeifaddrs(ifaddr);
 	cout << ntohs(sockInfo.sin_port) << endl; 
 	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
