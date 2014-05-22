@@ -1,5 +1,7 @@
 #include "common.h"
 
+#define BUF_SIZE 256
+
 using namespace std;
 
 //Source: the initial socket setup was shown in tutorial on May 18,2014
@@ -42,46 +44,39 @@ int main (int argc, char *argv[]) {
 	}
 
 	// prints out publicly reachable IP address/domain name and port number
-	struct ifaddrs *ifaddr, *ifa;
+	// source: http://man7.org/linux/man-pages/man3/getifaddrs.3.html
 
-    if (getifaddrs(&ifaddr) == -1) {
-       perror("getifaddrs");
-       exit(EXIT_FAILURE);
-   }
+	struct ifaddrs *ifaddr;
+	if (getifaddrs(&ifaddr) == -1) {
+		cerr < "no ifaddrs found" << endl;
+		return 0;
+	}
 
-   for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
-       if (ifa->ifa_addr == NULL)
-           continue;
+	char buf[BUF_SIZE];
+	struct ifaddrs *ifa;
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+		
+		if (ifa->ifa_addr != NULL && ifa->ifa_addr->sa_family == AF_INET)
+		{
+			memset(buf, 0, BUF_SIZE);
+			int s = ;
+			if (getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in), buf, BUF_SIZE, NULL, 0, NI_NUMERICHOST) != 0) {
+				cerr << "Not able to find the ip address" << endl;
+				return 0;	
+			}
+		}
+	}
 
-       int family = ifa->ifa_addr->sa_family;
-
-       /* For an AF_INET* interface address, display the address */
-
-       if (family == AF_INET || family == AF_INET6) {
-           int s = getnameinfo(ifa->ifa_addr,
-                   (family == AF_INET) ? sizeof(struct sockaddr_in) :
-                                         sizeof(struct sockaddr_in6),
-                   buf, 256,
-                   NULL, 0, NI_NUMERICHOST);
-           if (s != 0) {
-               printf("getnameinfo() failed: %s\n", gai_strerror(s));
-               exit(EXIT_FAILURE);
-           }
-
-           printf("\t\taddress: <%s>\n", buf);
-       } 
-   }
-
-	freeifaddrs(ifaddr);
-	cout << ntohs(sockInfo.sin_port) << endl; 
+	cout << buff << " " << ntohs(sockInfo.sin_port) << endl; 
 	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
 	//Read from stdin information on groups till it sees an EOF. 
 	populateGroups();
 
-	char buf[256];
+	freeifaddrs(ifaddr);
+	memset(buf, 0, BUF_SIZE);
 	//Accept client commands
-	while (recvfrom(socketId, buf, 256, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
+	while (recvfrom(socketId, buf, BUF_SIZE, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
 
 		// tells the server to terminate; i.e., the server process dies. Termination must be graceful.
 		if (strcmp("STOP", buf) == 0)
@@ -106,7 +101,7 @@ int main (int argc, char *argv[]) {
 			}
 		}
 
-		memset(buf, 0, 256);
+		memset(buf, 0, BUF_SIZE);
 	}
 
 	close(socketId);
