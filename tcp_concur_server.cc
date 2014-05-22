@@ -4,7 +4,7 @@ using namespace std;
 
 int main (int argc, char *argv[]) {
 
-	int serverSocket;
+	int serverSocket, connectSocket;
 	unsigned short portnum;
 
 	// Grab port if provided, otherwise assign 0
@@ -57,13 +57,13 @@ int main (int argc, char *argv[]) {
 	
 	bool stop = false; 
  	while (!stop) {
-        if ( (childpid = fork ()) == 0 ) {
+        if (fork() == 0 ) {
             close(serverSocket);
             
             struct sockaddr_in clientAddr;
                 int clientAddrlen = sizeof(struct sockaddr_in);
                 // Accept request
-                int connectSocket = accept(serverSocket, (struct sockaddr *) (&clientAddr), (socklen_t*) (&clientAddrlen));
+                connectSocket = accept(serverSocket, (struct sockaddr *) (&clientAddr), (socklen_t*) (&clientAddrlen));
                 printf("Received request!\n");
         
             char buf[256];
@@ -96,8 +96,7 @@ int main (int argc, char *argv[]) {
                 memset(buf, 0, 256);
             }
         }
+        close(connectSocket);
 	}
-    
-	close(connectSocket);
 	return 0;
 }
