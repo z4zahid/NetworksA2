@@ -8,7 +8,6 @@ using namespace std;
 
 int main(int argc, char **argv) {
  	int clientSocket;
- 	struct sockaddr_in servaddr;
  	char sendline[MAXLINE], recvline[MAXLINE];
 
 	if (argc < 3) {
@@ -23,12 +22,40 @@ int main(int argc, char **argv) {
  	}
 
 	 // Set up the server address
- 	memset(&servaddr, 0, sizeof(servaddr));
+	struct sockaddr_in servaddr;
+ 	/*memset(&servaddr, 0, sizeof(servaddr));
  	servaddr.sin_family = AF_INET;
- 	servaddr.sin_addr.s_addr= inet_addr(argv[1]);
+ 	servaddr.sin_addr.s_addr = inet_addr(argv[1]);
  	servaddr.sin_port =  htons(atoi(argv[2])); //convert to big-endian order
 
- 	//Connection of the client to the socket
+	*/
+
+	struct addrinfo socketSpecs;
+	memset(&socketSpecs, 0, sizeof(struct addrinfo));
+	socketSpecs.ai_family = AF_INET;	//ipv4
+	socketSpecs.ai_socktype = SOCK_STREAM; //tdp
+
+	//as the port number is not defined, we get all matching sockets populted in results
+	struct addrinfo *results;
+	int addrInfo = getaddrinfo (argv[1], NULL, (const struct addrinfo *) (&socketSpecs), &results);
+	if ( addrInfo != 0) {
+		cerr << "Did not find matching sockets" << endl; 
+		return 0;
+	}
+
+	servaddr.sin_family = AF_INET;
+
+	//we iterate through the matching sockets to find the correct one and populate our server address
+	struct addrinfo *j;
+	for (j = results; j != NULL; j = j->ai_next) {
+		if (j->ai_family == AF_INET) {
+			memcpy (&servaddr, j->ai_addr, sizeof(struct sockaddr_in));
+			break;
+		}
+	}
+	servaddr.sin_port = htons(atoi(argv[2]));
+    
+     	//Connection of the client to the socket
  	if (connect(clientSocket, (struct sockaddr *) &servaddr, sizeof(servaddr))<0) {
   		perror("Problem in connecting to the server");
   		exit(3);
