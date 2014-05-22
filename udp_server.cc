@@ -48,7 +48,7 @@ int main (int argc, char *argv[]) {
 
 	struct ifaddrs *ifaddr;
 	if (getifaddrs(&ifaddr) == -1) {
-		cerr < "no ifaddrs found" << endl;
+		cerr << "no ifaddrs found" << endl;
 		return 0;
 	}
 
@@ -59,7 +59,6 @@ int main (int argc, char *argv[]) {
 		if (ifa->ifa_addr != NULL && ifa->ifa_addr->sa_family == AF_INET)
 		{
 			memset(buf, 0, BUF_SIZE);
-			int s = ;
 			if (getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in), buf, BUF_SIZE, NULL, 0, NI_NUMERICHOST) != 0) {
 				cerr << "Not able to find the ip address" << endl;
 				return 0;	
@@ -67,13 +66,13 @@ int main (int argc, char *argv[]) {
 		}
 	}
 
-	cout << buff << " " << ntohs(sockInfo.sin_port) << endl; 
+	freeifaddrs(ifaddr);
+	cout << buf << " " << ntohs(sockInfo.sin_port) << endl; 
 	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
 	//Read from stdin information on groups till it sees an EOF. 
 	populateGroups();
 
-	freeifaddrs(ifaddr);
 	memset(buf, 0, BUF_SIZE);
 	//Accept client commands
 	while (recvfrom(socketId, buf, BUF_SIZE, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
