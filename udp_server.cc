@@ -15,7 +15,7 @@ int main (int argc, char *argv[]) {
 	// Defaut port is 0
 	unsigned short port = port = (argc < 2)?  0: (unsigned short)atoi(argv[1]);
 
-	// Create a socket for UDP
+	// Create a socket for UDP server
 	int socketId;
 	if ((socketId = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		cerr << "Socket was not created" << endl;
