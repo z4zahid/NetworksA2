@@ -1,5 +1,7 @@
 #include "common.h"
 
+#define BUF_SIZE 256
+
 using namespace std;
 
 //Source: the initial socket setup was shown in tutorial on May 18,2014
@@ -13,7 +15,7 @@ int main (int argc, char *argv[]) {
 	}
 
 	// Defaut port is 0
-	unsigned short port = port = (argc < 2)?  0: (unsigned short)atoi(argv[1]);
+	unsigned short port = (argc < 2)?  0: (unsigned short)atoi(argv[1]);
 
 	// Create a socket for UDP server
 	int socketId;
@@ -41,16 +43,40 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	//prints out port number (with no embellishment whatsoever — the port number only)
-	cout << ntohs(sockInfo.sin_port) << endl; 
+	// prints out publicly reachable IP address/domain name and port number
+	// source: http://man7.org/linux/man-pages/man3/getifaddrs.3.html
+
+	struct ifaddrs *ifaddr;
+	if (getifaddrs(&ifaddr) == -1) {
+		cerr < "no ifaddrs found" << endl;
+		return 0;
+	}
+
+	char buf[BUF_SIZE];
+	struct ifaddrs *ifa;
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+		
+		if (ifa->ifa_addr != NULL && ifa->ifa_addr->sa_family == AF_INET)
+		{
+			memset(buf, 0, BUF_SIZE);
+			int s = ;
+			if (getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in), buf, BUF_SIZE, NULL, 0, NI_NUMERICHOST) != 0) {
+				cerr << "Not able to find the ip address" << endl;
+				return 0;	
+			}
+		}
+	}
+
+	cout << buff << " " << ntohs(sockInfo.sin_port) << endl; 
 	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
 	//Read from stdin information on groups till it sees an EOF. 
 	populateGroups();
 
-	char buf[256];
+	freeifaddrs(ifaddr);
+	memset(buf, 0, BUF_SIZE);
 	//Accept client commands
-	while (recvfrom(socketId, buf, 256, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
+	while (recvfrom(socketId, buf, BUF_SIZE, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
 
 		// tells the server to terminate; i.e., the server process dies. Termination must be graceful.
 		if (strcmp("STOP", buf) == 0)
@@ -75,7 +101,7 @@ int main (int argc, char *argv[]) {
 			}
 		}
 
-		memset(buf, 0, 256);
+		memset(buf, 0, BUF_SIZE);
 	}
 
 	close(socketId);
