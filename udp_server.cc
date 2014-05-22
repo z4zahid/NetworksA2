@@ -41,8 +41,14 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	//prints out port number (with no embellishment whatsoever — the port number only)
-	cout << ntohs(sockInfo.sin_port) << endl; 
+	// prints out publicly reachable IP address/domain name and port number
+	char hbuf[256], sbuf[256];
+
+	if (getnameinfo((struct sockaddr *) (&sockInfo), (socklen_t*) (&addrlen), hbuf, sizeof(hbuf), sbuf,
+	            sizeof(sbuf), NI_NUMERICHOST | NI_NUMERICSERV) == 0)
+	    printf("host=%s, serv=%s\n", hbuf, sbuf);
+
+	cout << sockInfo.sin_addr << " " << ntohs(sockInfo.sin_port) << endl; 
 	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
 	//Read from stdin information on groups till it sees an EOF. 
