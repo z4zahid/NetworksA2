@@ -93,6 +93,7 @@ atoi(argv[1]);
 			}
 			memset(buf, 0, 256);
 		}
+		close(connectSocket);
 	}
     
 	close(serverSocket);
