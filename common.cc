@@ -5,6 +5,13 @@ using namespace std;
 
 vector<group> groups;
 
+bool convertToInt(string s, int &result) {
+    std::stringstream ss;
+    ss << s;
+    ss >> result;
+    return (!ss.fail());
+}
+
 vector<string> parseParamsFromClient(string command) {
 
 	stringstream commandStream(command);
@@ -34,22 +41,20 @@ std::vector<string> parseParamsFromStdIn(string command) {
 }
 
 string getStudentName(string groupNum, string studentNum) {
+    int groupId, studentId;
+    if (convertToInt(groupNum, groupId) && convertToInt(studentNum, studentId)) {
+        for (vector<group>::iterator it = groups.begin() ; it != groups.end(); ++it) {
+            
+            group m_group = *it;
+            if (m_group.groupId == groupId) {
 
-	int groupId = atoi(groupNum.c_str());
-	int studentId = atoi(studentNum.c_str());
-
-	for (vector<group>::iterator it = groups.begin() ; it != groups.end(); ++it) {
-		
-		group m_group = *it;
-		if (m_group.groupId == groupId) {
-
-			map<int,string>::iterator studentIterator = m_group.students.find(studentId);
-			if (studentIterator != m_group.students.end()) {
-				return studentIterator->second;
-			}
-		}
-	}
-
+                map<int,string>::iterator studentIterator = m_group.students.find(studentId);
+                if (studentIterator != m_group.students.end()) {
+                    return studentIterator->second;
+                }
+            }
+        }
+    }
 	//doesn't exist
 	return "error: " + groupNum + " " + studentNum;
 }
@@ -66,7 +71,6 @@ string getStudentNameWithGet(string command) {
     
 	string groupNum = params[1];
 	string studentNum = params[2];
-	cout << groupNum << " " << studentNum << endl;    
 	return getStudentName(groupNum, studentNum);
 }
 
@@ -91,29 +95,30 @@ void populateGroups() {
 	string line;
 	int curGroupId = -1;
 	map<int, string> m_students;
+    bool valid = false;
 	while (getline(cin, line)) {
-
 		if (!cin.eof()) {
 			vector<string> params = parseParamsFromStdIn(line);
-			if (params[0] == "Group")
-			{
+			if (params[0] == "Group") {
 				flush(curGroupId, &m_students);
-				curGroupId = atoi(params[1].c_str());
-			}
-			else 
-			{
-				int studentId = atoi(params[0].c_str());
+                valid = convertToInt(params[1], curGroupId);
+			} else {
+				int studentId;
+                valid = convertToInt(params[0], studentId);
 				string studentName = params[1];
-	  			m_students.insert (std::pair<int, string>(studentId, studentName));
+                if (valid) {
+                    m_students.insert (std::pair<int, string>(studentId, studentName));
+                }
 			}
 		}
 	}
-	flush(curGroupId, &m_students);
+    if (valid) {
+        flush(curGroupId, &m_students);
+    }
 }
 
 // AS PROVIDED BY PROF. TRIPUNITARA
 int mybind(int sockfd, struct sockaddr_in* addr) {
-
 	if(sockfd < 1) {
 		fprintf(stderr, "mybind(): sockfd has invalid value %d\n", sockfd);
 		return -1;
@@ -150,3 +155,5 @@ int mybind(int sockfd, struct sockaddr_in* addr) {
 	 * port to which we successfully bound. */
 	return 0;
 }
+
+
