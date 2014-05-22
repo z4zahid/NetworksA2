@@ -57,7 +57,6 @@ int main (int argc, char *argv[]) {
 
 	struct sockaddr_in serverAddress; 
 	serverAddress.sin_family = AF_INET;
-	serverAddress.sin_port = htons (port);
 
 	//we iterate through the matching sockets to find the correct one and populate our server address
 	struct addrinfo *j;
@@ -67,6 +66,9 @@ int main (int argc, char *argv[]) {
 			break;
 		}
 	}
+
+	//careful to add this after so its no over written in the memcpy
+	serverAddress.sin_port = htons (port);
 
 	char buf [256];
 	string command;
