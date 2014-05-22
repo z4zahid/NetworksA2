@@ -7,6 +7,7 @@
 using namespace std;
 
 //Source: the initial socket setup was shown in tutorial on May 18,2014
+
 int main (int argc, char *argv[]) {
 
 	// bad arguments
@@ -15,13 +16,20 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	// Create a socket for UDP
+	// parse the port number passed in
+	unsigned short port;
+	if (sscanf(argv[2], "%hu", &port) < 1) {
+		cerr << "Not a valid port number" << endl;
+	}
+
+	// Create a socket for UDP client
 	int socketId;
 	if ((socketId = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		cerr << "Could not create socket" << endl;
 		return 0;
 	}
 
+	//find a port to bind client socket to
 	struct sockaddr_in socketInfo;
 	socketInfo.sin_port = 0;
 	socketInfo.sin_family = AF_INET;
@@ -32,35 +40,33 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	struct sockaddr_in sa; /* Server address */
-	unsigned short portnum;
+	//support for both ip and domain name
+	//socketSpecs tells getaddrinfo to get us udp sockets, in the iPv4 family
+	struct addrinfo socketSpecs;
+	memset(&socketSpecs, 0, sizeof(struct addrinfo));
+	socketSpecs.ai_family = AF_INET;	//ipv4
+	socketSpecs.ai_socktype = SOCK_DGRAM; //udp
 
-	if (sscanf(argv[2], "%hu", &portnum) < 1) {
-		cerr << "sscanf() failed" << endl;
-	}
-
-	/* user getaddrinfo() to get server IP */
-	struct addrinfo *res, hints;
-	memset(&hints, 0, sizeof(struct addrinfo));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_DGRAM;
-
-	int addrInfo = getaddrinfo (argv[1], NULL, (const struct addrinfo *) (&hints), &res);
+	//as the port number is not defined, we get all matching sockets populted in results
+	struct addrinfo *results;
+	int addrInfo = getaddrinfo (argv[1], NULL, (const struct addrinfo *) (&socketSpecs), &results);
 	if ( addrInfo != 0) {
-		cerr << "Did not get AddrInfo" << endl; 
+		cerr << "Did not find matching sockets" << endl; 
 		return 0;
 	}
 
-	struct addrinfo *cai;
-	for (cai = res; cai != NULL; cai = cai->ai_next) {
-		if (cai->ai_family == AF_INET) {
-			memcpy (&sa, cai->ai_addr, sizeof(struct sockaddr_in));
+	struct sockaddr_in serverAddress; 
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_port = htons (port);
+
+	//we iterate through the matching sockets to find the correct one and populate our server address
+	struct addrinfo *j;
+	for (j = results; j != NULL; j = j->ai_next) {
+		if (j->ai_family == AF_INET) {
+			memcpy (&serverAddress, j->ai_addr, sizeof(struct sockaddr_in));
 			break;
 		}
 	}
-
-	sa.sin_family = AF_INET;
-	sa.sin_port = htons (portnum);
 
 	char buf [256];
 	string command;
@@ -80,7 +86,7 @@ int main (int argc, char *argv[]) {
 			strcpy(buf, command.c_str());
 		}
 
-		int len = sendto(socketId, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&sa), sizeof(struct sockaddr_in));
+		int len = sendto(socketId, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&serverAddress), sizeof(struct sockaddr_in));
 		if (len < strlen(buf) + 1) {
 			cerr << "Tried to send " << (strlen(buf) + 1) << ", sent only " << len << endl;
 		}
