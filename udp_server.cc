@@ -13,7 +13,7 @@ int main (int argc, char *argv[]) {
 	}
 
 	// Defaut port is 0
-	unsigned short port = port = (argc < 2)?  0: (unsigned short)atoi(argv[1]);
+	unsigned short port = (argc < 2)?  0: (unsigned short)atoi(argv[1]);
 
 	// Create a socket for UDP server
 	int socketId;
@@ -32,6 +32,12 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
+	char hbuf[256], sbuf[256];
+
+	if (getnameinfo((struct sockaddr *) (&sockInfo), (socklen_t) (addrlen), hbuf, sizeof(hbuf), sbuf,
+	            sizeof(sbuf), NI_NUMERICHOST | NI_NUMERICSERV) == 0)
+	    printf("host=%s, serv=%s\n", hbuf, sbuf);
+
 	//clear sockinfo
 	memset (&sockInfo, 0, sizeof(struct sockaddr_in));
 
@@ -42,13 +48,8 @@ int main (int argc, char *argv[]) {
 	}
 
 	// prints out publicly reachable IP address/domain name and port number
-	char hbuf[256], sbuf[256];
 
-	if (getnameinfo((struct sockaddr *) (&sockInfo), (socklen_t*) (&addrlen), hbuf, sizeof(hbuf), sbuf,
-	            sizeof(sbuf), NI_NUMERICHOST | NI_NUMERICSERV) == 0)
-	    printf("host=%s, serv=%s\n", hbuf, sbuf);
-
-	cout << sockInfo.sin_addr << " " << ntohs(sockInfo.sin_port) << endl; 
+	cout << ntohs(sockInfo.sin_port) << endl; 
 	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
 	//Read from stdin information on groups till it sees an EOF. 
