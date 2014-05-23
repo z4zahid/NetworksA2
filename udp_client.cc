@@ -87,7 +87,7 @@ int main (int argc, char *argv[]) {
 		} else {
 			if (command.length() > BUF_SIZE + 4)
 			{
-				cerr << "Input is too large" << endl;
+				cerr << "Input is too large. Try again." << endl;
 				continue;
 			}
 			command = "GET " + command;
