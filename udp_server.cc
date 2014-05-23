@@ -1,7 +1,5 @@
 #include "common.h"
 
-#define BUF_SIZE 256
-
 using namespace std;
 
 //Source: the initial socket setup was shown in tutorial on May 18,2014
@@ -52,14 +50,14 @@ int main (int argc, char *argv[]) {
 		return 0;
 	}
 
-	char buf[BUF_SIZE];
+	char buf[kBufSize];
 	struct ifaddrs *ifa;
 	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
 		
 		if (ifa->ifa_addr != NULL && ifa->ifa_addr->sa_family == AF_INET)
 		{
-			memset(buf, 0, BUF_SIZE);
-			if (getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in), buf, BUF_SIZE, NULL, 0, NI_NUMERICHOST) != 0) {
+			memset(buf, 0, kBufSize);
+			if (getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in), buf, kBufSize, NULL, 0, NI_NUMERICHOST) != 0) {
 				cerr << "Not able to find the ip address" << endl;
 				return 0;	
 			}
@@ -73,16 +71,16 @@ int main (int argc, char *argv[]) {
 	//Read from stdin information on groups till it sees an EOF. 
 	populateGroups();
 
-	memset(buf, 0, BUF_SIZE);
+	memset(buf, 0, kBufSize);
 	//Accept client commands
-	while (recvfrom(socketId, buf, BUF_SIZE, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
+	while (recvfrom(socketId, buf, kBufSize, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
 
 		// tells the server to terminate; i.e., the server process dies. Termination must be graceful.
-		if (strcmp("STOP", buf) == 0)
+		if (strcmp(kStop, buf) == 0)
 			break;
 
 		// signals the server that the client will stop sending data.
-		if (strcmp(STOP_SESSION, buf) == 0) {
+		if (strcmp(kStopSession, buf) == 0) {
 			// we ignore this case for the udp server, no connection to 'close'
 
 		} else {
@@ -100,7 +98,7 @@ int main (int argc, char *argv[]) {
 			}
 		}
 
-		memset(buf, 0, BUF_SIZE);
+		memset(buf, 0, kBufSize);
 	}
 
 	close(socketId);

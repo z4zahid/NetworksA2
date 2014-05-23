@@ -70,21 +70,21 @@ int main (int argc, char *argv[]) {
 	//careful to add this after so its no over written in the memcpy
 	serverAddress.sin_port = htons (port);
 
-	char buf [256];
+	char buf [kBufSize];
 	string command;
 
 	while (getline(cin, command) || cin.eof()) {
 
 		//make sure buffer is clear
-		memset(buf, 0, 256);		
+		memset(buf, 0, kBufSize);		
 
 		//fill buffer with msg to be sent to server
 		if (cin.eof()) {
-			strcpy (buf, STOP_SESSION);
-		} else if (command == STOP || command == STOP_L) {
-			strcpy(buf, STOP);
+			strcpy (buf, kStopSession);
+		} else if (command == kStop || command == kStopL) {
+			strcpy(buf, kStop);
 		} else {
-			command = "GET " + command;
+			command = kGet + command;
 			strcpy(buf, command.c_str());
 		}
 
@@ -93,13 +93,13 @@ int main (int argc, char *argv[]) {
 			cerr << "Tried to send " << (strlen(buf) + 1) << ", sent only " << len << endl;
 		}
 
-		//terminate client upon reaching end of input or getting the STOP command
-		if (cin.eof() || command == STOP || command == STOP_L)
+		//terminate client upon reaching end of input or getting the stop command
+		if (cin.eof() || command == kStop || command == kStopL)
 			break;	
 
 		//await reply from server, to be filled in to buffer
-		memset(buf, 0, 256);		
-		recvfrom(socketId, buf, 256, 0, NULL, NULL);
+		memset(buf, 0, kBufSize);		
+		recvfrom(socketId, buf, kBufSize, 0, NULL, NULL);
 		
 		string output(buf);
 		if (output.find("error") != string::npos)
