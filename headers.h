@@ -12,9 +12,9 @@
 #include <string>
 #include <iostream>
 
-const string kStop = "STOP"
-const string kStopL = "stop"
-const string kStopSession = "STOP_SESSION"
-const string kGet = "GET"
-const int kBufSize = 256;
+extern const string kStop;
+extern const string kStopL;
+extern const string kStopSession;
+extern const string kGet;
+extern const int kBufSize;
 
