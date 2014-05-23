@@ -6,10 +6,10 @@
 
 using namespace std;
 
-const string kStop = "STOP";
-const string kStopL = "stop";
-const string kStopSession = "STOP_SESSION";
-const string kGet = "GET";
+string kStop = "STOP"
+const string kStopL = "stop"
+const string kStopSession = "STOP_SESSION"
+const string kGet = "GET"
 const int kBufSize = 256;
 
 //Source: the initial socket setup was shown in tutorial on May 18,2014
