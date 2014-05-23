@@ -69,8 +69,7 @@ int main (int argc, char *argv[]) {
 	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
 	//Read from stdin information on groups till it sees an EOF. 
-	int success = populateGroups();
-	if (success == 0) {
+	while (populateGroups() == 0 ) {
 		cerr << "Input is too large" << endl;
 		return 0;
 	}
