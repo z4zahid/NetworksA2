@@ -1,5 +1,5 @@
 Group Members:
 
-Sarah Chan
-Zainab Zahid (20392585)
+Sarah Chan (s44chan)
+Zainab Zahid (z3zahid)
 
