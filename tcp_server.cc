@@ -94,8 +94,6 @@ int main (int argc, char *argv[]) {
 				if ((length = sendto(connectSocket, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&addr), sizeof(struct sockaddr_in))) < strlen(buf) + 1) {
 					fprintf(stderr, "Tried to send %lu, sent only %d\n", strlen(buf) + 1, length);
 				}
-			} else {
-				fprintf(stderr, "Invalid command %s\n", buf);
 			}
 			memset(buf, 0, BUFFER_SIZE);
 		}

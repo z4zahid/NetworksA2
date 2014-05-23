@@ -56,8 +56,6 @@ int main(int argc, char **argv) {
   		exit(3);
  	}
 	
-	cout << "Connected to the server" << endl;
-
 	char buf [256];
 	memset(buf, 0, 256);
 
@@ -75,7 +73,7 @@ int main(int argc, char **argv) {
 		fflush(stdout);
 
         	// Send message to the server
-		int length =  send(clientSocket, &buf, sizeof(buf), 0);
+		int length = sendto(clientSocket, &buf, sizeof(buf) + 1, 0, (const struct sockaddr *)(&serverAddress), sizeof(struct sockaddr_in));
         
 		if (length < strlen(buf) + 1) {
 			fprintf(stderr, "Tried to send %lu, sent only %d\n", strlen(buf) + 1, length);
@@ -89,9 +87,20 @@ int main(int argc, char **argv) {
        		// Read message from server
 		recvfrom(clientSocket, buf, 256, 0, NULL, NULL);
 
+		bool hasNullTerminate = false;
+		// check if '/0' exists
+		for (int i = 0; i < 256; i++) {
+			if (buf[i] == '\0') {
+				hasNullTerminate = true;
+				break;
+			}
+		}
+
 		string output(buf);
 		if (output.find("error") != string::npos) {
 			cerr << buf << endl;
+		} else if (!hasNullTerminate) {
+			cerr << "error: corrupted result" << endl;
 		} else {
 			cout << buf << endl; 
         	}
