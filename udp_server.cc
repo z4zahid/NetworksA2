@@ -80,7 +80,7 @@ int main (int argc, char *argv[]) {
 	while (recvfrom(socketId, buf, BUF_SIZE, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
 
 		// tells the server to terminate; i.e., the server process dies. Termination must be graceful.
-		if (strcmp("STOP", buf) == 0)
+		if (strcmp(STOP, buf) == 0)
 			break;
 
 		// signals the server that the client will stop sending data.
@@ -98,7 +98,7 @@ int main (int argc, char *argv[]) {
 
 			int len;
 			if ((len = sendto(socketId, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&sockInfo), sizeof(struct sockaddr_in))) < strlen(buf) + 1) {
-				cerr << "Tried to send " << (strlen(buf) + 1) << ", sent only " << len << endl;
+				cerr << "Only sent: " << << len << endl;
 			}
 		}
 
