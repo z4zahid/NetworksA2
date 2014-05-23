@@ -73,8 +73,7 @@ int main (int argc, char *argv[]) {
     		// Accept request
     		int connectSocket = accept(serverSocket, (struct sockaddr *) (&clientAddr), (socklen_t*) (&clientAddrlen));
 	
-		int n;
-		while ((n = recv(connectSocket, buf, BUFFER_SIZE, 0)) > 0) {	
+		while (recv(connectSocket, buf, BUFFER_SIZE, 0) > 0) {	
 			string command(buf);
 			// Terminate server command
 			if (strcmp(STOP, buf) == 0) {
