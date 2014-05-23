@@ -1,7 +1,5 @@
 #include "common.h"
 
-#define BUF_SIZE 256
-
 using namespace std;
 
 //Source: the initial socket setup was shown in tutorial on May 18,2014
@@ -71,7 +69,11 @@ int main (int argc, char *argv[]) {
 	memset(&sockInfo, 0, sizeof(struct sockaddr_in));
 
 	//Read from stdin information on groups till it sees an EOF. 
-	populateGroups();
+	int success = populateGroups();
+	if (success == 0) {
+		cerr << "Input is too large" << endl;
+		return 0;
+	}
 
 	memset(buf, 0, BUF_SIZE);
 	//Accept client commands

@@ -91,12 +91,16 @@ void flush(int curGroupId, map<int, string> *studentMap) {
 }
 
 //Note: assumes input is correct, that it does not try later to add to an existing group etc (asked TA)
-void populateGroups() {
+int populateGroups() {
 	string line;
 	int curGroupId = -1;
 	map<int, string> m_students;
     bool valid = false;
 	while (getline(cin, line)) {
+
+		if (line.length() > BUF_SIZE)
+			return 0;
+
 		if (!cin.eof()) {
 			vector<string> params = parseParamsFromStdIn(line);
 			if (params[0] == "Group") {
@@ -115,6 +119,7 @@ void populateGroups() {
     if (valid) {
         flush(curGroupId, &m_students);
     }
+    return 1;
 }
 
 // AS PROVIDED BY PROF. TRIPUNITARA

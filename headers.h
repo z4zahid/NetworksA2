@@ -16,3 +16,4 @@
 #define STOP_L "stop"
 #define STOP_SESSION "STOP_SESSION"
 #define GET "GET"
+#define BUF_SIZE 500

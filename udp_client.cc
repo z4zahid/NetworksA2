@@ -11,7 +11,7 @@ using namespace std;
 int main (int argc, char *argv[]) {
 
 	// bad arguments
-	if (argc < 3) {
+	if (argc != 3) {
 		cerr << "usage : " << argv[0] << " <server name/ip> <server port>" << endl;
 		return 0;
 	}
@@ -20,6 +20,7 @@ int main (int argc, char *argv[]) {
 	unsigned short port;
 	if (sscanf(argv[2], "%hu", &port) < 1) {
 		cerr << "Not a valid port number" << endl;
+		return 0;
 	}
 
 	// Create a socket for UDP client
@@ -70,13 +71,13 @@ int main (int argc, char *argv[]) {
 	//careful to add this after so its no over written in the memcpy
 	serverAddress.sin_port = htons (port);
 
-	char buf [256];
+	char buf [BUF_SIZE];
 	string command;
 
 	while (getline(cin, command) || cin.eof()) {
 
 		//make sure buffer is clear
-		memset(buf, 0, 256);		
+		memset(buf, 0, BUF_SIZE);		
 
 		//fill buffer with msg to be sent to server
 		if (cin.eof()) {
@@ -84,6 +85,11 @@ int main (int argc, char *argv[]) {
 		} else if (command == STOP || command == STOP_L) {
 			strcpy(buf, STOP);
 		} else {
+			if (command.length() > BUF_SIZE)
+			{
+				cerr << "Input is too large" << endl;
+				return 0;
+			}
 			command = "GET " + command;
 			strcpy(buf, command.c_str());
 		}
@@ -98,8 +104,8 @@ int main (int argc, char *argv[]) {
 			break;	
 
 		//await reply from server, to be filled in to buffer
-		memset(buf, 0, 256);		
-		recvfrom(socketId, buf, 256, 0, NULL, NULL);
+		memset(buf, 0, BUF_SIZE);		
+		recvfrom(socketId, buf, BUF_SIZE, 0, NULL, NULL);
 		
 		string output(buf);
 		if (output.find("error") != string::npos)
