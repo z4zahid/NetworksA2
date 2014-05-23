@@ -86,9 +86,9 @@ int main (int argc, char *argv[]) {
 
 		//fill buffer with msg to be sent to server
 		if (cin.eof()) {
-			strcpy (buf, kStopSession);
+			strcpy (buf, kStopSession.c_str();
 		} else if (command == kStop || command == kStopL) {
-			strcpy(buf, kStop);
+			strcpy(buf, kStop.c_str());
 		} else {
 			command = kGet + command;
 			strcpy(buf, command.c_str());

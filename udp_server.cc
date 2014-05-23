@@ -80,11 +80,11 @@ int main (int argc, char *argv[]) {
 	while (recvfrom(socketId, buf, kBufSize, 0, (struct sockaddr*) (&sockInfo), (socklen_t*) (&addrlen))) {
 
 		// tells the server to terminate; i.e., the server process dies. Termination must be graceful.
-		if (strcmp(kStop, buf) == 0)
+		if (strcmp(kStop.c_str(), buf) == 0)
 			break;
 
 		// signals the server that the client will stop sending data.
-		if (strcmp(kStopSession, buf) == 0) {
+		if (strcmp(kStopSession.c_str(), buf) == 0) {
 			// we ignore this case for the udp server, no connection to 'close'
 
 		} else {
