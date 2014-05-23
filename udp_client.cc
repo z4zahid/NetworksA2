@@ -85,7 +85,7 @@ int main (int argc, char *argv[]) {
 		} else if (command == STOP || command == STOP_L) {
 			strcpy(buf, STOP);
 		} else {
-			if (command.length() > BUF_SIZE)
+			if (command.length() > BUF_SIZE + 4)
 			{
 				cerr << "Input is too large" << endl;
 				return 0;
@@ -96,7 +96,7 @@ int main (int argc, char *argv[]) {
 
 		int len = sendto(socketId, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&serverAddress), sizeof(struct sockaddr_in));
 		if (len < strlen(buf) + 1) {
-			cerr << "Only sent: " << << len << endl;
+			cerr << "Only sent: " << len << endl;
 		}
 
 		//terminate client upon reaching end of input or getting the STOP command
@@ -114,7 +114,8 @@ int main (int argc, char *argv[]) {
 			cout << buf << endl; 
 	}
 
-	close(socketId);	
+	close(socketId);
+	shutdown(socket, SHUT_RDWR);	
 	return 0;
 
 }
