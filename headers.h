@@ -12,9 +12,3 @@
 #include <string>
 #include <iostream>
 
-extern const string kStop;
-extern const string kStopL;
-extern const string kStopSession;
-extern const string kGet;
-extern const int kBufSize;
-

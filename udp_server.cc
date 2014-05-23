@@ -2,6 +2,10 @@
 
 using namespace std;
 
+const string kStop = "STOP";
+const string kStopSession = "STOP_SESSION";
+const int kBufSize = 256;
+
 //Source: the initial socket setup was shown in tutorial on May 18,2014
 
 int main (int argc, char *argv[]) {
