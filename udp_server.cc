@@ -98,7 +98,7 @@ int main (int argc, char *argv[]) {
 
 			int len;
 			if ((len = sendto(socketId, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&sockInfo), sizeof(struct sockaddr_in))) < strlen(buf) + 1) {
-				cerr << "Only sent: " << << len << endl;
+				cerr << "Only sent: " << len << endl;
 			}
 		}
 
@@ -106,5 +106,6 @@ int main (int argc, char *argv[]) {
 	}
 
 	close(socketId);
+	shutdown(socket, SHUT_RDWR);	
 	return 0;
 }
