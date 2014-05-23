@@ -23,25 +23,15 @@ atoi(argv[1]);
 	addr.sin_port = htons(portnum);
 	addr.sin_addr.s_addr = INADDR_ANY;
 
-    	// Bind the socket
-    	// If it fails, exit the program
+    // Bind the socket
+    // If it fails, exit the program
 	if (mybind (serverSocket, (struct sockaddr_in *)(&addr)) < 0) {
 		perror ("bind");
 		exit(0);
 	}
 
-/*	memset (&addr, 0, sizeof(struct sockaddr_in));
-
-	// Check if the port gets specified
-	int addrlen = sizeof(struct sockaddr_in);
-	if (getsockname(_socket, (struct sockaddr *) (&addr), (socklen_t*) (&addrlen)) < 0) {
-		perror ("getsockname");
-		exit(0);
-	}
-*/
 	//prints out port number (with no embellishment whatsoever — the port number only)
 	printf ("Port: %hu\n", ntohs(addr.sin_port));
-//	memset(&addr, 0, sizeof(struct sockaddr_in));
 
     	// Listen for request
     	if (listen(serverSocket, 8) == -1) {
@@ -75,14 +65,14 @@ atoi(argv[1]);
 				break;
 			// Signals the server that client will stop sending data
 			} else if (strcmp(STOP_SESSION, buf) == 0) {
-				cout << "TODO: stop client session - handle multiple client case" << endl;
-				
+                shutdown(connectSocket, SHUT_RDWR);
+				close(connectSocket);
+				break;
 			} else if (strcmp(GET, command.substr(0, 3).c_str()) == 0) {
 				string studentName = getStudentNameWithGet(command);
 				const char* message = studentName.c_str();
 				strcpy(buf, message);
-
-				cout << "Send back result " << buf << endl;
+                
 				// Send the result back to the client
 				int length;
 				if ((length = sendto(connectSocket, buf, strlen(buf) + 1, 0, (const struct sockaddr *)(&addr), sizeof(struct sockaddr_in))) < strlen(buf) + 1) {
@@ -93,7 +83,7 @@ atoi(argv[1]);
 			}
 			memset(buf, 0, 256);
 		}
-		close(connectSocket);
+		
 	}
     
 	close(serverSocket);

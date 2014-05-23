@@ -23,13 +23,7 @@ int main(int argc, char **argv) {
 
 	 // Set up the server address
 	struct sockaddr_in servaddr;
- 	/*memset(&servaddr, 0, sizeof(servaddr));
- 	servaddr.sin_family = AF_INET;
- 	servaddr.sin_addr.s_addr = inet_addr(argv[1]);
- 	servaddr.sin_port =  htons(atoi(argv[2])); //convert to big-endian order
-
-	*/
-
+ 
 	struct addrinfo socketSpecs;
 	memset(&socketSpecs, 0, sizeof(struct addrinfo));
 	socketSpecs.ai_family = AF_INET;	//ipv4
