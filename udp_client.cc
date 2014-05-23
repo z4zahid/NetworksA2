@@ -85,7 +85,7 @@ int main (int argc, char *argv[]) {
 		} else if (command == STOP || command == STOP_L) {
 			strcpy(buf, STOP);
 		} else {
-			if (command.length() > BUF_SIZE)
+			if (command.length() > BUF_SIZE + 4)
 			{
 				cerr << "Input is too large" << endl;
 				return 0;
