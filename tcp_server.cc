@@ -1,3 +1,5 @@
+// Codestyle guide: https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+
 #include "common.h"
 
 using namespace std;
@@ -5,11 +7,10 @@ using namespace std;
 int main (int argc, char *argv[]) {
 
 	int serverSocket;
-	unsigned short portnum;
+	unsigned short portNumber;
 
 	// Grab port if provided, otherwise assign 0
-	portnum = (argc < 2) ? 0 : (unsigned short) 
-atoi(argv[1]);
+	portNumber = (argc < 2) ? 0 : (unsigned short) atoi(argv[1]);
 
 	// Create TCP socket
 	if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -20,7 +21,7 @@ atoi(argv[1]);
 	// Structure to provide socket info for bind
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(portnum);
+	addr.sin_port = htons(portNumber);
 	addr.sin_addr.s_addr = INADDR_ANY;
 
     // Bind the socket
@@ -32,7 +33,6 @@ atoi(argv[1]);
 
 	//prints out port number (with no embellishment whatsoever — the port number only)
 	printf ("Port: %hu\n", ntohs(addr.sin_port));
-
     	// Listen for request
     	if (listen(serverSocket, 8) == -1) {
         	perror("Issues listening");
@@ -41,7 +41,7 @@ atoi(argv[1]);
     
     	    
 	//Read from stdin information on groups till it sees an EOF.
-    	printf("start\n");
+    printf("start\n");
 	populateGroups();
 
    	printf("Accepting requests\n");

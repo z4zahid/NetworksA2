@@ -1,14 +1,15 @@
-#include "headers.h"
+// Codestyle guide: https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#define MAXLINE 4096 /*max text line length*/
+#include "headers.h"
+
 using namespace std;
 
 int main(int argc, char **argv) {
  	int clientSocket;
- 	char sendline[MAXLINE], recvline[MAXLINE];
 
 	if (argc < 3) {
 		fprintf (stderr, "usage : %s <server name/ip> <server port>\n", argv[0]);
@@ -22,7 +23,7 @@ int main(int argc, char **argv) {
  	}
 
 	 // Set up the server address
-	struct sockaddr_in servaddr;
+	struct sockaddr_in serverAddress;
  
 	struct addrinfo socketSpecs;
 	memset(&socketSpecs, 0, sizeof(struct addrinfo));
@@ -37,20 +38,20 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	servaddr.sin_family = AF_INET;
+	serverAddress.sin_family = AF_INET;
 
 	//we iterate through the matching sockets to find the correct one and populate our server address
 	struct addrinfo *j;
 	for (j = results; j != NULL; j = j->ai_next) {
 		if (j->ai_family == AF_INET) {
-			memcpy (&servaddr, j->ai_addr, sizeof(struct sockaddr_in));
+			memcpy (&serverAddress, j->ai_addr, sizeof(struct sockaddr_in));
 			break;
 		}
 	}
-	servaddr.sin_port = htons(atoi(argv[2]));
+	serverAddress.sin_port = htons(atoi(argv[2]));
     
      	//Connection of the client to the socket
- 	if (connect(clientSocket, (struct sockaddr *) &servaddr, sizeof(servaddr))<0) {
+ 	if (connect(clientSocket, (struct sockaddr *) &serverAddress, sizeof(serverAddress))<0) {
   		perror("Problem in connecting to the server");
   		exit(3);
  	}

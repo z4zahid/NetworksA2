@@ -1,5 +1,7 @@
-#include "common.h"
+// Codestyle guide: https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+
 #include <sstream>
+#include "common.h"
 
 using namespace std;
 
