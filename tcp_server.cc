@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#define BUFFER_SIZE 256
+
 using namespace std;
 
 int main (int argc, char *argv[]) {
@@ -31,9 +33,30 @@ int main (int argc, char *argv[]) {
 		exit(0);
 	}
 
-	//prints out port number (with no embellishment whatsoever — the port number only)
-	printf ("Port: %hu\n", ntohs(addr.sin_port));
-    	// Listen for request
+	struct ifaddrs *ifaddr;
+	if (getifaddrs(&ifaddr) == -1) {
+		cerr << "no ifaddrs found" << endl;
+		return 0;
+	}
+
+	char buf[BUFFER_SIZE];
+	struct ifaddrs *ifa;
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+		
+		if (ifa->ifa_addr != NULL && ifa->ifa_addr->sa_family == AF_INET)
+		{
+			memset(buf, 0, BUFFER_SIZE);
+			if (getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in), buf, BUFFER_SIZE, NULL, 0, NI_NUMERICHOST) != 0) {
+				cerr << "Not able to find the ip address" << endl;
+				return 0;	
+			}
+		}
+	}
+	
+	//prints out port number (with no embellishment whatsoever — the port number only)	
+	cout << buf << " " << ntohs(addr.sin_port) << endl; 
+
+	// Listen for request
     	if (listen(serverSocket, 8) == -1) {
         	perror("Issues listening");
         	exit(0);
@@ -41,10 +64,7 @@ int main (int argc, char *argv[]) {
     
     	    
 	//Read from stdin information on groups till it sees an EOF.
-    printf("start\n");
 	populateGroups();
-
-   	printf("Accepting requests\n");
 	
 	bool stop = false; 
  	while (!stop) {
@@ -52,12 +72,9 @@ int main (int argc, char *argv[]) {
         	int clientAddrlen = sizeof(struct sockaddr_in);
     		// Accept request
     		int connectSocket = accept(serverSocket, (struct sockaddr *) (&clientAddr), (socklen_t*) (&clientAddrlen));
-    		printf("Received request!\n");
-    
-		char buf[256];
 	
 		int n;
-		while ((n = recv(connectSocket, buf, 256, 0)) > 0) {	
+		while ((n = recv(connectSocket, buf, BUFFER_SIZE, 0)) > 0) {	
 			string command(buf);
 			// Terminate server command
 			if (strcmp(STOP, buf) == 0) {
@@ -81,7 +98,7 @@ int main (int argc, char *argv[]) {
 			} else {
 				fprintf(stderr, "Invalid command %s\n", buf);
 			}
-			memset(buf, 0, 256);
+			memset(buf, 0, BUFFER_SIZE);
 		}
 		
 	}
