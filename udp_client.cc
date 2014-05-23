@@ -115,7 +115,7 @@ int main (int argc, char *argv[]) {
 	}
 
 	close(socketId);
-	shutdown(socket, SHUT_RDWR);	
+	shutdown(socketId, SHUT_RDWR);	
 	return 0;
 
 }

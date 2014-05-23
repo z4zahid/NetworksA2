@@ -71,7 +71,6 @@ int main (int argc, char *argv[]) {
 	//Read from stdin information on groups till it sees an EOF. 
 	while (populateGroups() == 0 ) {
 		cerr << "Input is too large. Try Again." << endl;
-		return 0;
 	}
 
 	memset(buf, 0, BUF_SIZE);
