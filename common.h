@@ -1,9 +1,11 @@
+// Codestyle guide: https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "headers.h"
 #include <map>
 #include <vector>
+#include "headers.h"
 
 #define	PORT_RANGE_LO	10000
 #define PORT_RANGE_HI	10100
