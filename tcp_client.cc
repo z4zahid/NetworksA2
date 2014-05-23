@@ -66,12 +66,16 @@ int main(int argc, char **argv) {
 		} else if (command == STOP) {
 			strcpy(buf, STOP);
 		} else {
-           		command = string(GET) + " " + command;
+            if (command.length() + 4 > BUF_SIZE) {
+				cerr << "Input is too large" << endl;
+				continue;
+			}
+            command = string(GET) + " " + command;
 			strcpy(buf, command.c_str());
 		}
 
 		fflush(stdout);
-
+        
         	// Send message to the server
 		int length = sendto(clientSocket, &buf, sizeof(buf) + 1, 0, (const struct sockaddr *)(&serverAddress), sizeof(struct sockaddr_in));
         
